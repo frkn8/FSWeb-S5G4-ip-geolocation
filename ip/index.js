@@ -27,7 +27,7 @@ async function ipAdresimiAl(){
     (tag içindeki yere kendi ipnizi yazarak URL'yi oluşturun):
     https://apis.ergineer.com/ipgeoapi/<ipniz>
 	
-	NOT: Bilgisayarın IP adresini öğrenmek için: https://apis.ergineer.com/ipadresim 
+	NOT: Bilgisayarın IP adresini öğrenmek için: 	
 	ADIM 5'e gelene kadar fonksiyonunuzu test etmek için ip nizi URL'ye manuel olarak ekleyebilirsiniz.
 */
 
@@ -70,3 +70,49 @@ async function ipAdresimiAl(){
 
 
 //kodlar buraya gelecek
+ipAdresimiAl().then(() => {
+	var url = "https://apis.ergineer.com/ipgeoapi/" + benimIP;
+	axios
+	  .get(url)
+	  .then((response) => {
+		const ipDinamik = response.data;
+		const cardes = cardOlustur(ipDinamik);
+		const cardsElement = document.querySelector(".cards");
+		cardsElement.appendChild(cardes);
+	  })
+	  .catch((error) => {
+		console.log("başarısız", error);
+	  });
+  });
+  function cardOlustur(data) {
+	console.log("data bilgi: ", data);
+	const card = document.createElement("div");
+	card.classList.add("card");
+	const ulkeImg = document.createElement("img");
+	if (ulkeImg.img) {
+	  ulkeImg.src = data.ülkebayrağı;
+	} else {
+	  ulkeImg.src = "https://flagshub.com/images/flag-of-turkey.png";
+	}
+	const cardInfo = document.createElement("div");
+	cardInfo.classList.add("card-info");
+	const ipH3 = document.createElement("h3");
+	ipH3.classList.add("ip");
+	ipH3.textContent = data.sorgu;
+	const country = document.createElement("p");
+	country.classList.add("ulke");
+	country.textContent = `${data.ülke} (${data.ülkeKodu})`;
+	const enBoy = document.createElement("p");
+	enBoy.textContent = `Enlem: ${data.enlem} Boylam: ${data.boylam}`;
+	const city = document.createElement("p");
+	city.textContent = `Şehir: ${data.şehir}`;
+	const time = document.createElement("p");
+	time.textContent = `Saat dilimi: ${data.saatdilimi}`;
+	const para = document.createElement("p");
+	para.textContent = `Para birimi: ${data.parabirimi}`;
+	const ispP = document.createElement("p");
+	ispP.textContent = `ISP: ${data.isp}`;
+	cardInfo.append(ipH3, country, enBoy, city, time, para, ispP);
+	card.append(ulkeImg, cardInfo);
+	return card;
+  }
